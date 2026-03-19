@@ -2,9 +2,77 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>MATRA 52</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routes Tábla</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button { padding: 10px; background: #007cba; color: white; border: none; cursor: pointer; }
+    </style>
 </head>
 <body>
-T E S T
+    <h1>Routes Tábla Supabase-ből</h1>
+    <button onclick="loadRoutes()">Töltsd be a route-okat</button>
+    <div id="loading" style="display:none;">Betöltés...</div>
+    <table id="routesTable" style="display:none;">
+        <thead>
+            <tr>
+                <!-- Automatikus header: az első sor oszlopnevei -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadRoutes() {
+            const loading = document.getElementById('loading');
+            const table = document.getElementById('routesTable');
+            
+            loading.style.display = 'block';
+            table.style.display = 'none';
+            
+            try {
+                const response = await fetch('/.netlify/functions/get-routes');
+                if (!response.ok) throw new Error(`Hiba: ${response.status}`);
+                
+                const routes = await response.json();
+                
+                if (routes.length === 0) {
+                    document.body.innerHTML += '<p>Nincs adat a routes táblában.</p>';
+                    return;
+                }
+                
+                const thead = table.querySelector('thead tr');
+                thead.innerHTML = '';
+                Object.keys(routes[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    thead.appendChild(th);
+                });
+                
+                const tbody = table.querySelector('tbody');
+                tbody.innerHTML = '';
+                routes.forEach(row => {
+                    const tr = document.createElement('tr');
+                    Object.values(row).forEach(value => {
+                        const td = document.createElement('td');
+                        td.textContent = value ?? '';
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                
+                table.style.display = 'table';
+            } catch (error) {
+                document.body.innerHTML += `<p>Hiba: ${error.message}</p>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        
+        // Automatikus betöltés oldal induláskor
+        window.onload = loadRoutes;
+    </script>
 </body>
 </html>
