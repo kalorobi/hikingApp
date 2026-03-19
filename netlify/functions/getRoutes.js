@@ -7,7 +7,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 exports.handler = async (event, context) => {
   // opcionális: auth, query paraméterek stb.
   const { data, error } = await supabase
-    .from('routes')
+    .from('public.routes')
     .select('*');
 
   if (error) {
