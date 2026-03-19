@@ -33,7 +33,7 @@
             table.style.display = 'none';
             
             try {
-                const response = await fetch('/.netlify/functions/get-routes');
+                const response = await fetch('/.netlify/functions/getRoutes');
                 if (!response.ok) throw new Error(`Hiba: ${response.status}`);
                 
                 const routes = await response.json();
