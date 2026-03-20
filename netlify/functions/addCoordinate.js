@@ -11,7 +11,7 @@ exports.handler = async (event) => {
 
 		latestPosition = {lat: data.lat, lng: data.lng, locusTime: data.locusTime};
 
-		await supabase.from('coordinates').insert([{latestPosition}]);
+		await supabase.from('coordinates').insert([{lat:data.lat, lng:data.lng, locusTime:data.locusTime}]);
 		
 		return {statusCode: 200, body: JSON.stringify({status: "ok"})};
 
