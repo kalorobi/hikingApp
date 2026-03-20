@@ -7,8 +7,8 @@ exports.handler = async (event) => {
 	if (event.httpMethod !== "POST"){
 		return { statusCode: 405, body: "Method Not Allowed" }; }
 	try{
+console.log(event.body);
 		const data = JSON.parse(event.body);
-console.log(data);
 
 		latestPosition = {lat: data.lat, lng: data.lng, locusTime: data.locusTime};
 
