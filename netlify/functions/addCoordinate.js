@@ -1,22 +1,20 @@
-const  { createClient } = require('@supabase/supabase-js');
+const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL,process.env.SUPABASE_KEY);
 
-let latestPosition = {lat: null, lng: null, locusTime: null};
-
 exports.handler = async (event) => {
-	if (event.httpMethod !== "POST"){
-		return { statusCode: 405, body: "Method Not Allowed" }; }
+	if (event.httpMethod !== "POST"){return { statusCode: 405, body: "Method Not Allowed" }; }
 	try{
-console.log(event.body);
-		const data = JSON.parse(event.body);
-
-		latestPosition = {lat: data.lat, lng: data.lng, locusTime: data.locusTime};
-
-		await supabase.from('coordinates').insert([{lat:data.lat, lng:data.lng, locusTime:data.locusTime}]);
+		const params = new URLSearchParams(event.body);
+		const lat = parseFloat(params.get("lat"));
+		const lng = parseFloat(params.get("lng"));
+		const locusTime = params.get("time");
 		
-		return {statusCode: 200, body: JSON.stringify({status: "ok"})};
+		const { error } = await supabase
+		.from('coordinates')
+		.insert([{ lat, lng, locusTime}]);
 
+		if (error) {return {statusCode: 500, body: JSON.stringify({ error: error.message })};}
+		return {statusCode: 200, body: JSON.stringify({status: "ok"})};
 	}
-	catch (err){
-		return {statusCode: 400, body: JSON.stringify({error: "Invalid JSON"})};}
+	catch (err){return {statusCode: 400, body: JSON.stringify({error: "Invalid JSON"})};}
 };
