@@ -8,6 +8,7 @@ exports.handler = async (event) => {
 		return { statusCode: 405, body: "Method Not Allowed" }; }
 	try{
 		const data = JSON.parse(event.body);
+console.log(data);
 
 		latestPosition = {lat: data.lat, lng: data.lng, locusTime: data.locusTime};
 
