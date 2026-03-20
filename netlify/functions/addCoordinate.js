@@ -9,7 +9,7 @@ exports.handler = async (event) => {
 	try{
 		const data = JSON.parse(event.body);
 
-		latestPosition = {lat: data.latitude, lng: data.longitude, locusTime: data.time};
+		latestPosition = {lat: data.lat, lng: data.lng, locusTime: data.locusTime};
 
 		await supabase.from('coordinates').insert([{latestPosition}]);
 		
